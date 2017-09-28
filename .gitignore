@@ -3,3 +3,5 @@ Cavestory/.vs/
 *.vs
 *.config
 *.vcxproj
+*.filters
+*.user
