@@ -9,7 +9,7 @@ namespace
 //static
 int Game::kTileSize = 32;
 
-Game::Game()
+Game::Game() : running(false)
 {
 	SDL_Init(SDL_INIT_EVERYTHING);
 	SDL_ShowCursor(0);
@@ -30,7 +30,7 @@ void Game::eventLoop()
 	player_ = new Player(graphics, 320, 240);
 
 
-	bool running = true;
+	running = true;
 	int lastUpdateTime = SDL_GetTicks();
 
 	while (running)
@@ -52,38 +52,8 @@ void Game::eventLoop()
 			}
 		}
 
-		if (input.wasKeyPressed(SDLK_ESCAPE))
-		{
-			running = false;
-		}
-
-		// Player movement
-		if (input.isKeyHeld(SDLK_a) && input.isKeyHeld(SDLK_d))
-		{
-			player_->stopMoving();
-		}
-		else if (input.isKeyHeld(SDLK_a))
-		{
-			player_->startMovingLeft();
-		}
-		else if (input.isKeyHeld(SDLK_d))
-		{
-			player_->startMovingRight();
-		}
-		else
-		{
-			player_->stopMoving();
-		}
-
-		// Player Jump
-		if (input.wasKeyPressed(SDLK_SPACE))
-		{
-			player_->startJump();
-		}
-		else if (input.wasKeyReleased(SDLK_SPACE))
-		{
-			player_->stopJump();
-		}
+		// Handle all player inputs
+		Game::handleInput(input);
 
 		const int currentTimeMs = SDL_GetTicks();
 		Game::update(currentTimeMs - lastUpdateTime);
@@ -114,4 +84,40 @@ void Game::draw(Graphics &graphics)
 
 	graphics.updateWindowSurface();
 
+}
+
+void Game::handleInput(Input &input)
+{
+	if (input.wasKeyPressed(SDLK_ESCAPE))
+	{
+		running = false;
+	}
+
+	// Player movement
+	if (input.isKeyHeld(SDLK_LEFT) && input.isKeyHeld(SDLK_RIGHT))
+	{
+		player_->stopMoving();
+	}
+	else if (input.isKeyHeld(SDLK_LEFT))
+	{
+		player_->startMovingLeft();
+	}
+	else if (input.isKeyHeld(SDLK_RIGHT))
+	{
+		player_->startMovingRight();
+	}
+	else
+	{
+		player_->stopMoving();
+	}
+
+	// Player Jump
+	if (input.wasKeyPressed(SDLK_x))
+	{
+		player_->startJump();
+	}
+	else if (input.wasKeyReleased(SDLK_x))
+	{
+		player_->stopJump();
+	}
 }

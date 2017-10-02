@@ -18,8 +18,11 @@ private:
 	void eventLoop();
 	void update(int elapsedTimeMs);
 	void draw(Graphics &graphics);
+	void handleInput(Input &input);
 
 	Player* player_;
+
+	bool running;
 	
 };
 
