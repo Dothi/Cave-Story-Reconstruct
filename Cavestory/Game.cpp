@@ -27,7 +27,7 @@ void Game::eventLoop()
 	SDL_Event event;
 	Input input;
 
-	player_ = new Player(graphics, 320, 240);
+	player_ = new Player(graphics, 320.0f, 240.0f);
 
 
 	running = true;
@@ -109,6 +109,23 @@ void Game::handleInput(Input &input)
 	else
 	{
 		player_->stopMoving();
+	}
+
+	if (input.isKeyHeld(SDLK_UP) && input.isKeyHeld(SDLK_DOWN))
+	{
+		player_->lookHorizontal();
+	}
+	else if (input.isKeyHeld(SDLK_UP))
+	{
+		player_->lookUp();
+	}
+	else if (input.isKeyHeld(SDLK_DOWN))
+	{
+		player_->lookDown();
+	}
+	else
+	{
+		player_->lookHorizontal();
 	}
 
 	// Player Jump
