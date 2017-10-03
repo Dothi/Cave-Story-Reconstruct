@@ -1,5 +1,11 @@
 #include "Map.h"
 
+namespace
+{
+	// Sprites
+	std::string kSpriteFilePath("../content/PrtCave.bmp");
+}
+
 // static
 Map* Map::createTestMap(Graphics &graphics)
 {
@@ -8,12 +14,10 @@ Map* Map::createTestMap(Graphics &graphics)
 	const int numRows = 15; // 15 * 32(tilesize) = 480
 	const int numCols = 20;	// 20 * 32(tilesize) = 640
 
-	
-
 	map->foregroundSprites_ = std::vector<std::vector<Sprite*>>(
 		numRows, std::vector<Sprite*>(numCols));
 	
-	Sprite* sprite = new Sprite(graphics, "../content/PrtCave.bmp",
+	Sprite* sprite = new Sprite(graphics, kSpriteFilePath,
 		Game::kTileSize, 0,
 		Game::kTileSize, Game::kTileSize);
 

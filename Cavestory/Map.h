@@ -2,7 +2,7 @@
 #define MAP_H_
 
 #include <vector>
-#include <memory>
+#include <string>
 #include "Sprite.h"
 #include "Graphics.h"
 #include "Game.h"

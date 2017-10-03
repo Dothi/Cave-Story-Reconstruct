@@ -8,7 +8,6 @@
 
 struct Sprite
 {
-	Sprite() {}
 	Sprite(Graphics &graphics, 
 		const std::string &filePath,
 		int sourceX, int sourceY,
