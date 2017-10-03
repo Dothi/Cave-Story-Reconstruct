@@ -12,7 +12,6 @@ int Game::kTileSize = 32;
 Game::Game() : running(false)
 {
 	SDL_Init(SDL_INIT_EVERYTHING);
-	SDL_ShowCursor(0);
 	Game::eventLoop();
 }
 
@@ -28,6 +27,7 @@ void Game::eventLoop()
 	Input input;
 
 	player_ = new Player(graphics, 320.0f, 240.0f);
+	map_ = Map::createTestMap(graphics);
 
 
 	running = true;
@@ -75,12 +75,14 @@ void Game::eventLoop()
 void Game::update(int elapsedTimeMs)
 {
 	player_->update(elapsedTimeMs);
+	map_->update(elapsedTimeMs);
 }
 
 void Game::draw(Graphics &graphics)
 {
 	graphics.clear();
 	player_->draw(graphics);
+	map_->draw(graphics);
 
 	graphics.updateWindowSurface();
 

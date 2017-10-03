@@ -24,6 +24,7 @@ Graphics::Graphics()
 		kScreenWidth, kScreenHeight,
 		NULL);
 	screen_ = SDL_GetWindowSurface(window_);
+	SDL_ShowCursor(0);
 
 	//SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 }

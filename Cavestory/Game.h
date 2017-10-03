@@ -5,8 +5,10 @@
 #include "Graphics.h"
 #include "Input.h"
 #include "Player.h"
+#include "Map.h"
 
 struct Player;
+struct Map;
 
 struct Game
 {
@@ -20,7 +22,8 @@ private:
 	void draw(Graphics &graphics);
 	void handleInput(Input &input);
 
-	Player* player_;
+	Player *player_;
+	Map *map_;
 
 	bool running;
 	
