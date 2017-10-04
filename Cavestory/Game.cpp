@@ -74,7 +74,7 @@ void Game::eventLoop()
 
 void Game::update(int elapsedTimeMs)
 {
-	player_->update(elapsedTimeMs);
+	player_->update(elapsedTimeMs, *map_);
 	map_->update(elapsedTimeMs);
 }
 

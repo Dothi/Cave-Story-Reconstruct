@@ -6,7 +6,7 @@ namespace
 	const float kSlowdownFactor = 0.8f;
 	const float kWalkingAcceleration = 0.0012f;
 	const float kMaxSpeedX = 0.325f;
-	
+
 	// Jump Motion
 	const float kJumpSpeed = 0.325f;
 	const int kJumpTime = 275; //ms
@@ -27,10 +27,14 @@ namespace
 	const int kUpFrameOffset = 3;
 	const int kDownFrame = 6;
 	const int kBackFrame = 7;
-	
+
 	// Walk Animation
 	const int kWalkFps = 12;
 	const int kNumWalkFrames = 3;
+
+	// Collision Rectangle
+	const Rectangle kCollisionX = Rectangle(6, 10, 20, 12);
+	const Rectangle kCollisionY = Rectangle(10, 2, 12, 30);
 }
 
 bool operator<(const Player::SpriteState &a, const Player::SpriteState &b)
@@ -49,7 +53,7 @@ Player::Player(Graphics &graphics, int x, int y) :
 	initializeSprites(graphics);
 }
 
-void Player::update(int elapsedTimeMs)
+void Player::update(int elapsedTimeMs, const Map &map)
 {
 	sprites_[getSpriteState()]->update(elapsedTimeMs);
 	jump_.update(elapsedTimeMs);
@@ -144,19 +148,22 @@ void Player::lookHorizontal()
 
 void Player::initializeSprites(Graphics &graphics)
 {
-	for (MotionType motionType = FIRST_MOTION_TYPE;
+	for (int motionType = FIRST_MOTION_TYPE;
 		motionType < LAST_MOTION_TYPE;
-		motionType = static_cast<MotionType>(motionType +1))
+		++motionType)
 	{
-		for (HorizontalFacing horizontalFacing = FIRST_HORIZONTAL_FACING;
+		for (int horizontalFacing = FIRST_HORIZONTAL_FACING;
 			horizontalFacing < LAST_HORIZONTAL_FACING;
-			horizontalFacing = static_cast<HorizontalFacing>(horizontalFacing + 1))
+			++horizontalFacing)
 		{
-			for (VerticalFacing verticalFacing = FIRST_VERTICAL_FACING;
+			for (int verticalFacing = FIRST_VERTICAL_FACING;
 				verticalFacing < LAST_VERTICAL_FACING;
-				verticalFacing = static_cast<VerticalFacing>(verticalFacing + 1))
+				++verticalFacing)
 			{
-				initializeSprite(graphics, SpriteState(motionType, horizontalFacing, verticalFacing));
+				initializeSprite(graphics, SpriteState(
+					(MotionType)motionType,
+					(HorizontalFacing)horizontalFacing,
+					(VerticalFacing)verticalFacing));
 			}
 		}
 	}
@@ -213,7 +220,7 @@ Player::SpriteState Player::getSpriteState()
 
 	if (onGround())
 	{
-		 motion = accelerationX_ == 0.0f ? STANDING : WALKING;
+		motion = accelerationX_ == 0.0f ? STANDING : WALKING;
 	}
 	else
 	{
@@ -224,6 +231,58 @@ Player::SpriteState Player::getSpriteState()
 		motion,
 		horizontalFacing_,
 		verticalFacing_);
+}
+
+Rectangle Player::leftCollision(int delta) const
+{
+	return Rectangle(
+		position_.x + kCollisionX.left() + delta,
+		position_.y + kCollisionX.top(),
+		kCollisionX.getWidth() / 2 - delta,
+		kCollisionX.getHeight());
+}
+
+Rectangle Player::rightCollision(int delta) const
+{
+	return Rectangle(
+		position_.x + kCollisionX.left() + kCollisionX.getWidth() / 2,
+		position_.y + kCollisionX.top(),
+		kCollisionX.getWidth() / 2 + delta,
+		kCollisionX.getHeight());
+}
+
+Rectangle Player::topCollision(int delta) const
+{
+	return Rectangle(
+		position_.x + kCollisionY.left() ,
+		position_.y + kCollisionY.top() + delta,
+		kCollisionY.getWidth(),
+		kCollisionY.getHeight() / 2 - delta);
+}
+
+Rectangle Player::bottomCollision(int delta) const
+{
+	return Rectangle(
+		position_.x + kCollisionY.left(),
+		position_.y + kCollisionY.top() + kCollisionY.getHeight() / 2,
+		kCollisionY.getWidth(),
+		kCollisionY.getHeight() / 2 + delta);
+}
+
+Player::SpriteState::SpriteState(
+	MotionType motionType = STANDING,
+	HorizontalFacing horizontalFacing = LEFT, 
+	VerticalFacing verticalFacing = HORIZONTAL) :
+	motionType_(motionType),
+	horizontalFacing_(horizontalFacing), 
+	verticalFacing_(verticalFacing)
+{
+
+}
+
+Player::Jump::Jump() : timeRemainingMs_(0), active_(false)
+{
+
 }
 
 void Player::Jump::update(int elapsedTimeMs)
@@ -241,4 +300,14 @@ void Player::Jump::reset()
 {
 	timeRemainingMs_ = kJumpTime;
 	reactivate();
+}
+
+void Player::Jump::reactivate()
+{
+	active_ = timeRemainingMs_ > 0;
+}
+
+void Player::Jump::deactivate()
+{
+	active_ = false;
 }

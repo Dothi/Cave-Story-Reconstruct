@@ -8,14 +8,17 @@
 #include "AnimatedSprite.h"
 #include "Graphics.h"
 #include "Vector2.h"
+#include "Map.h"
+#include "Rectangle.h"
 
 struct Graphics;
+struct Map;
 
 struct Player
 {
 	Player(Graphics &graphics, int x, int y);
 
-	void update(int elapsedTimeMs);
+	void update(int elapsedTimeMs, const Map &map);
 	void draw(Graphics &graphics);
 
 	void startMovingLeft();
@@ -59,10 +62,10 @@ private:
 	// SpriteState of the player
 	struct SpriteState
 	{
-		SpriteState(MotionType motionType = STANDING, 
-			HorizontalFacing horizontalFacing = LEFT, VerticalFacing verticalFacing = HORIZONTAL) :
-			motionType_(motionType), 
-			horizontalFacing_(horizontalFacing), verticalFacing_(verticalFacing) {}
+		SpriteState(
+			MotionType motionType,
+			HorizontalFacing horizontalFacing, 
+			VerticalFacing verticalFacing);
 
 		MotionType motionType_;
 		HorizontalFacing horizontalFacing_;
@@ -71,12 +74,12 @@ private:
 
 	struct Jump
 	{
-		Jump() : timeRemainingMs_(0), active_(false) {}
+		Jump();
 
 		void update(int elapsedTimeMs);
 		void reset();
-		void reactivate() { active_ = timeRemainingMs_ > 0; }
-		void deactivate() { active_ = false; }
+		void reactivate();
+		void deactivate();
 		bool active() const { return active_; }
 
 	private:
@@ -89,6 +92,11 @@ private:
 	void initializeSprites(Graphics &graphics);
 	void initializeSprite(Graphics &graphics, const SpriteState &spriteState);
 	SpriteState getSpriteState();
+
+	Rectangle leftCollision(int delta) const;
+	Rectangle rightCollision(int delta) const;
+	Rectangle topCollision(int delta) const;
+	Rectangle bottomCollision(int delta) const;
 
 	bool onGround() const { return onGround_; }
 
