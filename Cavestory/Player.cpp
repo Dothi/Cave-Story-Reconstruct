@@ -58,7 +58,21 @@ void Player::update(int elapsedTimeMs, const Map &map)
 	sprites_[getSpriteState()]->update(elapsedTimeMs);
 	jump_.update(elapsedTimeMs);
 
-	position_.x += round(velocity_.x * elapsedTimeMs);
+	updateX(elapsedTimeMs, map);
+	updateY(elapsedTimeMs, map);
+
+	/*if (position_.y > 320)
+	{
+		position_.y = 320;
+		velocity_.y = 0.0f;
+	}
+	onGround_ = position_.y == 320;*/
+
+}
+
+void Player::updateX(int elapsedTimeMs, const Map &map)
+{
+	// Update velocity
 	velocity_.x += accelerationX_ * elapsedTimeMs;
 
 	if (accelerationX_ < 0.0f)
@@ -74,21 +88,122 @@ void Player::update(int elapsedTimeMs, const Map &map)
 		velocity_.x *= kSlowdownFactor;
 	}
 
-	position_.y += round(velocity_.y * elapsedTimeMs);
+	// Calculate delta
+	const int delta = (int)round(velocity_.x * elapsedTimeMs);
+	// Going right
+	if (delta > 0)
+	{
+		// Check collision in the dir of delta
+		CollisionInfo colInfo = colInfo.getWallCollisionInfo(map, rightCollision(delta));
+		// React to collision
+		if (colInfo.collided)
+		{
+			position_.x = colInfo.col * Game::kTileSize - kCollisionX.right();
+			velocity_.x = 0.0f;
+		}
+		else
+		{
+			position_.x += delta;
+		}
 
+		// Check collision in other direction
+		colInfo = colInfo.getWallCollisionInfo(map, leftCollision(0));
+
+		if (colInfo.collided)
+		{
+			position_.x = colInfo.col * Game::kTileSize + kCollisionX.right();
+		}
+	}
+	else
+	{
+		// Check collision in the dir of delta
+		CollisionInfo colInfo = colInfo.getWallCollisionInfo(map, leftCollision(delta));
+		// React to collision
+		if (colInfo.collided)
+		{
+			//position_.x = colInfo.col * Game::kTileSize + kCollisionX.right();
+			position_.x = colInfo.col * Game::kTileSize + Game::kTileSize - kCollisionX.left();
+			velocity_.x = 0.0f;
+		}
+		else
+		{
+			position_.x += delta;
+		}
+
+		// Check collision in other direction
+		colInfo = colInfo.getWallCollisionInfo(map, rightCollision(0));
+
+		if (colInfo.collided)
+		{
+			position_.x = colInfo.col * Game::kTileSize - kCollisionX.right();
+		}
+	}
+}
+
+void Player::updateY(int elapsedTimeMs, const Map &map)
+{
+	// Update velocity
 	if (!jump_.active())
 	{
 		velocity_.y = std::fmin(velocity_.y + kGravity * elapsedTimeMs, kMaxSpeedY);
 	}
 
-	if (position_.y > 320)
-	{
-		position_.y = 320;
-		velocity_.y = 0.0f;
-	}
-	onGround_ = position_.y == 320;
+	// Calculate delta
+	const int delta = round(velocity_.y * elapsedTimeMs);
 
+	//going down 
+	if (delta > 0)
+	{
+		// Check collision in the dir of delta
+		CollisionInfo colInfo = colInfo.getWallCollisionInfo(map, bottomCollision(delta));
+		// React to collision
+		if (colInfo.collided)
+		{
+			position_.y = colInfo.row * Game::kTileSize - kCollisionY.bottom();
+			velocity_.y = 0.0f;
+			onGround_ = true;
+		}
+		else
+		{
+			position_.y += delta;
+			onGround_ = false;
+		}
+
+		// Check collision in other direction
+		colInfo = colInfo.getWallCollisionInfo(map, topCollision(0));
+
+		if (colInfo.collided)
+		{
+			position_.y = colInfo.row * Game::kTileSize + kCollisionY.getHeight();
+		}
+	}
+	else
+	{
+		CollisionInfo colInfo = colInfo.getWallCollisionInfo(map, topCollision(delta));
+		// React to collision
+		if (colInfo.collided)
+		{
+			position_.y = colInfo.row * Game::kTileSize + Game::kTileSize - kCollisionY.top();
+			velocity_.y = 0.0f;
+		}
+		else
+		{
+			position_.y += delta;
+			onGround_ = false;
+		}
+
+		// Check collision in other direction
+		colInfo = colInfo.getWallCollisionInfo(map, bottomCollision(0));
+		if (colInfo.collided)
+		{
+			position_.y = colInfo.row * Game::kTileSize - kCollisionY.bottom();
+			onGround_ = true;
+		}
+	}
 }
+
+
+
 
 void Player::draw(Graphics &graphics)
 {
@@ -254,7 +369,7 @@ Rectangle Player::rightCollision(int delta) const
 Rectangle Player::topCollision(int delta) const
 {
 	return Rectangle(
-		position_.x + kCollisionY.left() ,
+		position_.x + kCollisionY.left(),
 		position_.y + kCollisionY.top() + delta,
 		kCollisionY.getWidth(),
 		kCollisionY.getHeight() / 2 - delta);
@@ -271,10 +386,10 @@ Rectangle Player::bottomCollision(int delta) const
 
 Player::SpriteState::SpriteState(
 	MotionType motionType = STANDING,
-	HorizontalFacing horizontalFacing = LEFT, 
+	HorizontalFacing horizontalFacing = LEFT,
 	VerticalFacing verticalFacing = HORIZONTAL) :
 	motionType_(motionType),
-	horizontalFacing_(horizontalFacing), 
+	horizontalFacing_(horizontalFacing),
 	verticalFacing_(verticalFacing)
 {
 
@@ -310,4 +425,21 @@ void Player::Jump::reactivate()
 void Player::Jump::deactivate()
 {
 	active_ = false;
+}
+
+Player::CollisionInfo Player::CollisionInfo::getWallCollisionInfo(const Map &map, const Rectangle &rectangle)
+{
+	std::vector<Map::CollisionTile> tiles = map.getCollidingTiles(rectangle);
+
+	CollisionInfo colInfo = { false, 0, 0 };
+
+	for (size_t i = 0; i < tiles.size(); ++i)
+	{
+		if (tiles[i].tileType_ == Map::WALL_TILE)
+		{
+			colInfo = { true, tiles[i].row_, tiles[i].col_ };
+			break;
+		}
+	}
+	return colInfo;
 }

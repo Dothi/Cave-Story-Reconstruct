@@ -19,6 +19,10 @@ struct Player
 	Player(Graphics &graphics, int x, int y);
 
 	void update(int elapsedTimeMs, const Map &map);
+
+	void updateX(int elapsedTimeMs, const Map &map);
+	void updateY(int elapsedTimeMs, const Map &map);
+
 	void draw(Graphics &graphics);
 
 	void startMovingLeft();
@@ -85,6 +89,14 @@ private:
 	private:
 		int timeRemainingMs_;
 		bool active_;
+	};
+
+	struct CollisionInfo
+	{
+		bool collided;
+		int row, col;
+
+		CollisionInfo getWallCollisionInfo(const Map &map, const Rectangle &rectangle);
 	};
 
 	friend bool operator<(const SpriteState &a, const SpriteState &b);
