@@ -6,7 +6,8 @@ Sprite::Sprite(
 	int sourceX, int sourceY,
 	int width, int height)
 {
-	spriteSheet_ = graphics.loadImage(filePath);
+	const bool blackIsTransparent = true;
+	spriteSheet_ = graphics.loadImage(filePath, blackIsTransparent);
 
 	sourceRect_.x = sourceX;
 	sourceRect_.y = sourceY;

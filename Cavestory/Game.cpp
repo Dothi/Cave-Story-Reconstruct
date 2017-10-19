@@ -6,8 +6,10 @@ namespace
 	const int kFps = 60;
 }
 
-//static
+// Static
 int Game::kTileSize = 32;
+int Game::kScreenWidth = 1024;
+int Game::kScreenHeight = 768;
 
 Game::Game() : running(false)
 {
@@ -81,11 +83,12 @@ void Game::update(int elapsedTimeMs)
 void Game::draw(Graphics &graphics)
 {
 	graphics.clear();
+
+	map_->drawBackground(graphics);
 	player_->draw(graphics);
 	map_->draw(graphics);
 
 	graphics.updateWindowSurface();
-
 }
 
 void Game::handleInput(Input &input)

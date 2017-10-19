@@ -7,10 +7,12 @@
 #include "Graphics.h"
 #include "Game.h"
 #include "Rectangle.h"
+#include "Backdrop.h"
 
 
 struct Graphics;
 struct Sprite;
+
 
 struct Map
 {
@@ -34,6 +36,7 @@ struct Map
 	std::vector<CollisionTile> getCollidingTiles(const Rectangle &rectangle) const;
 
 	void update(int elapsedTimeMs);
+	void drawBackground(Graphics &graphics) const;
 	void draw(Graphics &graphics) const;
 
 private:
@@ -49,6 +52,7 @@ private:
 		TileType tileType_;
 		Sprite* sprite_;
 	};
+	Backdrop* backdrop_;
 	std::vector<std::vector<Tile>> tiles_;
 };
 

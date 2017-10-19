@@ -5,6 +5,7 @@
 #include <string>
 #include <map>
 
+
 struct Graphics
 {
 	typedef SDL_Surface *SurfaceID;
@@ -12,7 +13,7 @@ struct Graphics
 	Graphics();
 	~Graphics();
 
-	SurfaceID loadImage(const std::string filePath);
+	SurfaceID loadImage(const std::string filePath, bool blackIsTransparent = false);
 
 	void blitSurface(
 		SurfaceID source,

@@ -11,6 +11,8 @@ Map* Map::createTestMap(Graphics &graphics)
 {
 	Map* map = new Map();
 
+	map->backdrop_ = new FixedBackdrop("../content/bkBlue.bmp", graphics);
+
 	const int numRows = 24; // 15 * 32(tilesize) = 480
 	const int numCols = 32;	// 20 * 32(tilesize) = 640
 
@@ -105,8 +107,14 @@ void Map::update(int elapsedTimeMs)
 	}
 }
 
+void Map::drawBackground(Graphics &graphics) const
+{
+	backdrop_->draw(graphics);
+}
+
 void Map::draw(Graphics &graphics) const
 {
+	
 	for (size_t row = 0; row < tiles_.size(); ++row)
 	{
 		for (size_t col = 0; col < tiles_[row].size(); ++col)

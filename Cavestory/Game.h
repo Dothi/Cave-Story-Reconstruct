@@ -7,6 +7,7 @@
 #include "Player.h"
 #include "Map.h"
 
+
 struct Player;
 struct Map;
 
@@ -16,6 +17,8 @@ struct Game
 	~Game();
 
 	static int kTileSize;
+	static int kScreenWidth;
+	static int kScreenHeight;
 private:
 	void eventLoop();
 	void update(int elapsedTimeMs);

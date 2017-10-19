@@ -2,7 +2,6 @@
 #define ANIMATED_SPRITE_H_
 
 #include "Sprite.h"
-#include "Game.h"
 
 struct AnimatedSprite : public Sprite
 {
