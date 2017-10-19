@@ -13,7 +13,7 @@ struct Graphics
 	Graphics();
 	~Graphics();
 
-	SurfaceID loadImage(const std::string filePath, bool blackIsTransparent = false);
+	SurfaceID loadImage(const std::string filePath, bool blackIsTransparent = true);
 
 	void blitSurface(
 		SurfaceID source,

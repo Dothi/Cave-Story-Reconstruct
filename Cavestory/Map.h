@@ -28,7 +28,7 @@ struct Map
 
 		int row_, col_;
 		TileType tileType_;
-		
+
 	};
 
 	static Map* createTestMap(Graphics &graphics);
@@ -40,12 +40,12 @@ struct Map
 	void draw(Graphics &graphics) const;
 
 private:
-	
+
 
 	struct Tile
 	{
 		Tile() : sprite_(nullptr), tileType_(AIR_TILE) {}
-		Tile(Sprite* sprite, 
+		Tile(Sprite* sprite,
 			TileType tileType = AIR_TILE) :
 			tileType_(tileType), sprite_(sprite) {}
 
@@ -53,6 +53,7 @@ private:
 		Sprite* sprite_;
 	};
 	Backdrop* backdrop_;
+	std::vector<std::vector<Sprite*>> backgroundTiles_;
 	std::vector<std::vector<Tile>> tiles_;
 };
 

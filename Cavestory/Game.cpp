@@ -4,6 +4,7 @@
 namespace
 {
 	const int kFps = 60;
+	const int kMaxFrameTime = 5 * 1000 / 60;
 }
 
 // Static
@@ -58,7 +59,10 @@ void Game::eventLoop()
 		Game::handleInput(input);
 
 		const int currentTimeMs = SDL_GetTicks();
-		Game::update(currentTimeMs - lastUpdateTime);
+		const int elapsedTime = currentTimeMs - lastUpdateTime;
+
+		Game::update(std::fmin(elapsedTime, kMaxFrameTime));
+
 		lastUpdateTime = currentTimeMs;
 		Game::draw(graphics);
 

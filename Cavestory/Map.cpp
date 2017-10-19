@@ -18,6 +18,9 @@ Map* Map::createTestMap(Graphics &graphics)
 
  	map->tiles_ = std::vector<std::vector<Tile>>(
 		numRows, std::vector<Tile>(numCols));
+
+	map->backgroundTiles_ = std::vector<std::vector<Sprite*>>(
+		numRows, std::vector<Sprite*>(numCols));
 	
 	Sprite* sprite = new Sprite(graphics, kSpriteFilePath,
 		Game::kTileSize, 0,
@@ -45,30 +48,44 @@ Map* Map::createTestMap(Graphics &graphics)
 	{
 		map->tiles_[firstRow][col] = tile;
 	}
-	map->tiles_[lastRow - 3][5] = tile;
-	map->tiles_[lastRow - 3][6] = tile;
+	map->tiles_[lastRow - 4][5] = tile;
 	map->tiles_[lastRow - 4][6] = tile;
-	map->tiles_[lastRow - 3][4] = tile;
-	map->tiles_[lastRow - 3][27] = tile;
-	map->tiles_[lastRow - 3][26] = tile;
-	map->tiles_[lastRow - 3][25] = tile;
-	map->tiles_[lastRow - 4 ][25] = tile;
+	map->tiles_[lastRow - 5][6] = tile;
+	map->tiles_[lastRow - 4][4] = tile;
+	map->tiles_[lastRow - 4][27] = tile;
+	map->tiles_[lastRow - 4][26] = tile;
+	map->tiles_[lastRow - 4][25] = tile;
+	map->tiles_[lastRow - 5 ][25] = tile;
+	map->tiles_[lastRow - 1][30] = tile;
+	map->tiles_[lastRow - 1][1] = tile;
+	//map->tiles_[lastRow - 3][27] = tile;
 	for (int col = 6; col < numCols - 6; ++col)
 	{
-		map->tiles_[lastRow - 5][col] = tile;
+		map->tiles_[lastRow - 6][col] = tile;
 	}
 
-	
-	/*for (int i = 0; i < 11; ++i)
+	Sprite* chainTop = new Sprite(graphics, kSpriteFilePath,
+		11 * Game::kTileSize, 2 * Game::kTileSize,
+		Game::kTileSize, Game::kTileSize);
+
+	Sprite* chainMiddle = new Sprite(graphics, kSpriteFilePath,
+		12 * Game::kTileSize, 2 * Game::kTileSize,
+		Game::kTileSize, Game::kTileSize);
+
+	Sprite* chainBottom = new Sprite(graphics, kSpriteFilePath,
+		13 * Game::kTileSize, 2 * Game::kTileSize,
+		Game::kTileSize, Game::kTileSize);
+
+	map->backgroundTiles_[18][9] = chainTop;
+	map->backgroundTiles_[19][9] = chainBottom;
+	map->backgroundTiles_[18][22] = chainTop;
+	map->backgroundTiles_[19][22] = chainBottom;
+
+	for (int col = 9; col < numCols - 9; ++col)
 	{
-		map->foregroundSprites_[i][0] = sprite;
-		map->foregroundSprites_[i][19] = sprite;
-		
+		map->tiles_[lastRow - 3][col] = tile;
 	}
-	for (int i = 0; i < 20; ++i)
-	{
-		map->foregroundSprites_[0][i] = sprite;
-	}*/
+
 	
 	return map;
 }
@@ -110,6 +127,19 @@ void Map::update(int elapsedTimeMs)
 void Map::drawBackground(Graphics &graphics) const
 {
 	backdrop_->draw(graphics);
+
+	for (size_t row = 0; row < backgroundTiles_.size(); ++row)
+	{
+		for (size_t col = 0; col < backgroundTiles_[row].size(); ++col)
+		{
+			if (backgroundTiles_[row][col])
+			{
+				backgroundTiles_[row][col] ->draw(
+					graphics,
+					col * Game::kTileSize, row * Game::kTileSize);
+			}
+		}
+	}
 }
 
 void Map::draw(Graphics &graphics) const

@@ -5,11 +5,13 @@
 #include <map>
 #include <string>
 #include "Sprite.h"
+#include "SpriteState.h"
 #include "AnimatedSprite.h"
 #include "Graphics.h"
 #include "Vector2.h"
 #include "Map.h"
 #include "Rectangle.h"
+#include "PolarStar.h"
 
 struct Graphics;
 struct Map;
@@ -48,21 +50,7 @@ private:
 		FALLING,
 		LAST_MOTION_TYPE
 	};
-	enum HorizontalFacing
-	{
-		FIRST_HORIZONTAL_FACING,
-		LEFT = FIRST_HORIZONTAL_FACING,
-		RIGHT,
-		LAST_HORIZONTAL_FACING
-	};
-	enum VerticalFacing
-	{
-		FIRST_VERTICAL_FACING,
-		UP = FIRST_VERTICAL_FACING,
-		DOWN,
-		HORIZONTAL,
-		LAST_VERTICAL_FACING
-	};
+	
 
 	// SpriteState of the player
 	struct SpriteState
@@ -107,6 +95,9 @@ private:
 	bool onGround_;
 	bool jumpActive_;
 	bool interacting_;
+
+
+	PolarStar polarStar_;
 
 	std::map<SpriteState, Sprite*> sprites_;
 };

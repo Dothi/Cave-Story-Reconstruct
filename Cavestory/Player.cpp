@@ -51,7 +51,8 @@ Player::Player(Graphics &graphics, int x, int y) :
 	verticalFacing_(HORIZONTAL),
 	onGround_(false),
 	jumpActive_(false),
-	interacting_(false)
+	interacting_(false),
+	polarStar_(graphics)
 {
 	initializeSprites(graphics);
 }
@@ -207,6 +208,7 @@ void Player::updateY(int elapsedTimeMs, const Map &map)
 
 void Player::draw(Graphics &graphics)
 {
+	polarStar_.draw(graphics, horizontalFacing_, verticalFacing_, position_);
 	sprites_[getSpriteState()]->draw(graphics, position_.x, position_.y);
 }
 
