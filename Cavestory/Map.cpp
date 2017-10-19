@@ -11,8 +11,8 @@ Map* Map::createTestMap(Graphics &graphics)
 {
 	Map* map = new Map();
 
-	const int numRows = 15; // 15 * 32(tilesize) = 480
-	const int numCols = 20;	// 20 * 32(tilesize) = 640
+	const int numRows = 24; // 15 * 32(tilesize) = 480
+	const int numCols = 32;	// 20 * 32(tilesize) = 640
 
  	map->tiles_ = std::vector<std::vector<Tile>>(
 		numRows, std::vector<Tile>(numCols));
@@ -23,18 +23,40 @@ Map* Map::createTestMap(Graphics &graphics)
 
 	Tile tile = Tile(sprite, WALL_TILE);
 
-	const int row = 11;
+	const int lastRow = numRows - 1;
 
 	for (int col = 0; col < numCols; ++col)
 	{
-		map->tiles_[row][col] = tile;
+		map->tiles_[lastRow][col] = tile;
+	}
+	const int lastCol = numCols - 1;
+
+	for (int row = 0; row < numRows; ++row)
+	{
+		map->tiles_[row][0] = tile;
+		map->tiles_[row][lastCol] = tile;
 	}
 
-	map->tiles_[10][5] = tile;
-	map->tiles_[9][4] = tile;
-	map->tiles_[8][3] = tile;
-	map->tiles_[7][2] = tile;
-	map->tiles_[10][3] = tile;
+	const int firstRow = 0;
+
+	for (int col = 0; col < numCols; ++col)
+	{
+		map->tiles_[firstRow][col] = tile;
+	}
+	map->tiles_[lastRow - 3][5] = tile;
+	map->tiles_[lastRow - 3][6] = tile;
+	map->tiles_[lastRow - 4][6] = tile;
+	map->tiles_[lastRow - 3][4] = tile;
+	map->tiles_[lastRow - 3][27] = tile;
+	map->tiles_[lastRow - 3][26] = tile;
+	map->tiles_[lastRow - 3][25] = tile;
+	map->tiles_[lastRow - 4 ][25] = tile;
+	for (int col = 6; col < numCols - 6; ++col)
+	{
+		map->tiles_[lastRow - 5][col] = tile;
+	}
+
+	
 	/*for (int i = 0; i < 11; ++i)
 	{
 		map->foregroundSprites_[i][0] = sprite;

@@ -42,6 +42,7 @@ private:
 	{
 		FIRST_MOTION_TYPE,
 		STANDING = FIRST_MOTION_TYPE,
+		INTERACTING,
 		WALKING,
 		JUMPING,
 		FALLING,
@@ -76,21 +77,6 @@ private:
 		VerticalFacing verticalFacing_;
 	};
 
-	struct Jump
-	{
-		Jump();
-
-		void update(int elapsedTimeMs);
-		void reset();
-		void reactivate();
-		void deactivate();
-		bool active() const { return active_; }
-
-	private:
-		int timeRemainingMs_;
-		bool active_;
-	};
-
 	struct CollisionInfo
 	{
 		bool collided;
@@ -115,11 +101,13 @@ private:
 	Vector2 position_;
 	Vector2 velocity_;
 	
-	float accelerationX_;
+	int accelerationX_;
 	HorizontalFacing horizontalFacing_;
 	VerticalFacing verticalFacing_;
 	bool onGround_;
-	Jump jump_;
+	bool jumpActive_;
+	bool interacting_;
+
 	std::map<SpriteState, Sprite*> sprites_;
 };
 

@@ -2,8 +2,8 @@
 
 namespace
 {
-	const int kScreenWidth = 640;
-	const int kScreenHeight = 480;
+	const int kScreenWidth = 1024;
+	const int kScreenHeight = 768;
 }
 
 Graphics::SurfaceID Graphics::loadImage(const std::string filePath)

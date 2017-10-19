@@ -131,11 +131,11 @@ void Game::handleInput(Input &input)
 	}
 
 	// Player Jump
-	if (input.wasKeyPressed(SDLK_x))
+	if (input.wasKeyPressed(SDLK_x) || input.wasKeyPressed(SDLK_SPACE))
 	{
 		player_->startJump();
 	}
-	else if (input.wasKeyReleased(SDLK_x))
+	else if (input.wasKeyReleased(SDLK_x) || input.wasKeyPressed(SDLK_SPACE))
 	{
 		player_->stopJump();
 	}
