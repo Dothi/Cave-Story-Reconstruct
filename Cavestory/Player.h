@@ -111,13 +111,15 @@ private:
 
 	MotionType motionType() const;
 	bool onGround() const { return onGround_; }
+	VerticalFacing verticalFacing() const { return onGround() && intendedVerticalFacing_ == DOWN ?
+		HORIZONTAL : intendedVerticalFacing_; }
 
 	Vector2 position_;
 	Vector2 velocity_;
 	
 	int accelerationX_;
 	HorizontalFacing horizontalFacing_;
-	VerticalFacing verticalFacing_;
+	VerticalFacing intendedVerticalFacing_;
 	bool onGround_;
 	bool jumpActive_;
 	bool interacting_;
