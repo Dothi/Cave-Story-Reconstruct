@@ -141,12 +141,21 @@ void Game::handleInput(Input &input)
 	}
 
 	// Player Jump
-	if (input.wasKeyPressed(SDLK_x) || input.wasKeyPressed(SDLK_SPACE))
+	if (input.wasKeyPressed(SDLK_z) || input.wasKeyPressed(SDLK_SPACE))
 	{
 		player_->startJump();
 	}
-	else if (input.wasKeyReleased(SDLK_x) || input.wasKeyPressed(SDLK_SPACE))
+	else if (input.wasKeyReleased(SDLK_z) || input.wasKeyPressed(SDLK_SPACE))
 	{
 		player_->stopJump();
+	}
+	// Player Fire
+	if (input.wasKeyPressed(SDLK_x))
+	{
+		player_->startFire();
+	}
+	else if (input.wasKeyReleased(SDLK_x))
+	{
+		player_->stopFire();
 	}
 }

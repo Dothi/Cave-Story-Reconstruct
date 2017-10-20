@@ -61,6 +61,8 @@ void Player::update(int elapsedTimeMs, const Map &map)
 
 	walkingAnimation_.update();
 
+	polarStar_.updateProjectiles(elapsedTimeMs);
+
 	updateX(elapsedTimeMs, map);
 	updateY(elapsedTimeMs, map);
 }
@@ -208,9 +210,7 @@ void Player::updateY(int elapsedTimeMs, const Map &map)
 
 void Player::draw(Graphics &graphics)
 {
-	const bool gunUp = motionType() == WALKING && walkingAnimation_.stride() != STRIDE_MIDDLE;
-
-	polarStar_.draw(graphics, horizontalFacing_, verticalFacing(), gunUp, position_);
+	polarStar_.draw(graphics, horizontalFacing_, verticalFacing(), gunUp(), position_);
 	sprites_[getSpriteState()]->draw(graphics, position_.x, position_.y);
 }
 
@@ -248,6 +248,16 @@ void Player::startJump()
 void Player::stopJump()
 {
 	jumpActive_ = false;
+}
+
+void Player::startFire()
+{
+	polarStar_.startFire(position_, horizontalFacing_, verticalFacing(), gunUp());
+}
+
+void Player::stopFire()
+{
+	polarStar_.stopFire();
 }
 
 void Player::lookUp()
