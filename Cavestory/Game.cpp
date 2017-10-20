@@ -1,4 +1,5 @@
 #include "Game.h"
+#include "Timer.h"
 #include <cstdio>
 
 namespace
@@ -61,7 +62,7 @@ void Game::eventLoop()
 		const int currentTimeMs = SDL_GetTicks();
 		const int elapsedTime = currentTimeMs - lastUpdateTime;
 
-		Game::update(std::fmin(elapsedTime, kMaxFrameTime));
+		Game::update(std::fmin(elapsedTime, kMaxFrameTime)); //TIP: Divide this for slowmo for debugging purposes
 
 		lastUpdateTime = currentTimeMs;
 		Game::draw(graphics);
@@ -80,6 +81,8 @@ void Game::eventLoop()
 
 void Game::update(int elapsedTimeMs)
 {
+	Timer::updateAll(elapsedTimeMs);
+
 	player_->update(elapsedTimeMs, *map_);
 	map_->update(elapsedTimeMs);
 }

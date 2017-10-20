@@ -12,6 +12,7 @@
 #include "Map.h"
 #include "Rectangle.h"
 #include "PolarStar.h"
+#include "Timer.h"
 
 struct Graphics;
 struct Map;
@@ -50,6 +51,14 @@ private:
 		FALLING,
 		LAST_MOTION_TYPE
 	};
+	enum StrideType
+	{
+		FIRST_STRIDE_TYPE,
+		STRIDE_MIDDLE = FIRST_STRIDE_TYPE,
+		STRIDE_LEFT,
+		STRIDE_RIGHT,
+		LAST_STRIDE_TYPE
+	};
 	
 
 	// SpriteState of the player
@@ -58,11 +67,26 @@ private:
 		SpriteState(
 			MotionType motionType,
 			HorizontalFacing horizontalFacing, 
-			VerticalFacing verticalFacing);
+			VerticalFacing verticalFacing,
+			StrideType strideType);
 
 		MotionType motionType_;
 		HorizontalFacing horizontalFacing_;
 		VerticalFacing verticalFacing_;
+		StrideType strideType_;
+	};
+
+	struct WalkingAnimation
+	{
+		WalkingAnimation();
+		void update();
+		void reset();
+
+		StrideType stride() const;
+	private:
+		Timer frameTimer_;
+		int currentIndex_;
+		bool forward_;
 	};
 
 	struct CollisionInfo
@@ -84,6 +108,8 @@ private:
 	Rectangle topCollision(int delta) const;
 	Rectangle bottomCollision(int delta) const;
 
+
+	MotionType motionType() const;
 	bool onGround() const { return onGround_; }
 
 	Vector2 position_;
@@ -96,6 +122,7 @@ private:
 	bool jumpActive_;
 	bool interacting_;
 
+	WalkingAnimation walkingAnimation_;
 
 	PolarStar polarStar_;
 

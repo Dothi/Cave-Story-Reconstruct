@@ -25,9 +25,11 @@ PolarStar::PolarStar(Graphics &graphics)
 	initializeSprites(graphics);
 }
 
-void PolarStar::draw(Graphics &graphics, 
+void PolarStar::draw(
+	Graphics &graphics, 
 	HorizontalFacing horizontalFacing, 
-	VerticalFacing verticalFacing, 
+	VerticalFacing verticalFacing,
+	bool gunUp,
 	Vector2 position)
 {
 	if (horizontalFacing == LEFT)
@@ -36,6 +38,8 @@ void PolarStar::draw(Graphics &graphics,
 		position.y -= Game::kTileSize / 4;
 	if (verticalFacing == DOWN)
 		position.y += Game::kTileSize / 4;
+	if (gunUp)
+		position.y -= 2.0f;
 	spriteMap_[SpriteState(horizontalFacing, verticalFacing)]->draw(graphics, (int)round(position.x), (int)round(position.y));
 }
 

@@ -29,9 +29,7 @@ namespace
 	const int kDownFrame = 6;
 	const int kBackFrame = 7;
 
-	// Walk Animation
-	const int kWalkFps = 12;
-	const int kNumWalkFrames = 3;
+	
 
 	// Collision Rectangle
 	const Rectangle kCollisionX = Rectangle(6, 10, 20, 12);
@@ -40,7 +38,7 @@ namespace
 
 bool operator<(const Player::SpriteState &a, const Player::SpriteState &b)
 {
-	return std::tie(a.motionType_, a.horizontalFacing_, a.verticalFacing_) < std::tie(b.motionType_, b.horizontalFacing_, b.verticalFacing_);
+	return std::tie(a.motionType_, a.horizontalFacing_, a.verticalFacing_, a.strideType_) < std::tie(b.motionType_, b.horizontalFacing_, b.verticalFacing_, b.strideType_);
 }
 
 Player::Player(Graphics &graphics, int x, int y) :
@@ -60,6 +58,8 @@ Player::Player(Graphics &graphics, int x, int y) :
 void Player::update(int elapsedTimeMs, const Map &map)
 {
 	sprites_[getSpriteState()]->update(elapsedTimeMs);
+
+	walkingAnimation_.update();
 
 	updateX(elapsedTimeMs, map);
 	updateY(elapsedTimeMs, map);
@@ -208,12 +208,15 @@ void Player::updateY(int elapsedTimeMs, const Map &map)
 
 void Player::draw(Graphics &graphics)
 {
-	polarStar_.draw(graphics, horizontalFacing_, verticalFacing_, position_);
+	const bool gunUp = motionType() == WALKING && walkingAnimation_.stride() != STRIDE_MIDDLE;
+
+	polarStar_.draw(graphics, horizontalFacing_, verticalFacing_, gunUp, position_);
 	sprites_[getSpriteState()]->draw(graphics, position_.x, position_.y);
 }
 
 void Player::startMovingLeft()
 {
+	if (onGround() && accelerationX_ == 0) walkingAnimation_.reset();
 	accelerationX_ = -1;
 	horizontalFacing_ = LEFT;
 	interacting_ = false;
@@ -221,6 +224,7 @@ void Player::startMovingLeft()
 
 void Player::startMovingRight()
 {
+	if (onGround() && accelerationX_ == 0) walkingAnimation_.reset();
 	accelerationX_ = 1;
 	horizontalFacing_ = RIGHT;
 	interacting_ = false;
@@ -278,10 +282,16 @@ void Player::initializeSprites(Graphics &graphics)
 				verticalFacing < LAST_VERTICAL_FACING;
 				++verticalFacing)
 			{
-				initializeSprite(graphics, SpriteState(
-					(MotionType)motionType,
-					(HorizontalFacing)horizontalFacing,
-					(VerticalFacing)verticalFacing));
+				for (int strideType = FIRST_STRIDE_TYPE;
+					strideType < LAST_STRIDE_TYPE;
+					++strideType)
+				{
+					initializeSprite(graphics, SpriteState(
+						(MotionType)motionType,
+						(HorizontalFacing)horizontalFacing,
+						(VerticalFacing)verticalFacing,
+						(StrideType)strideType));
+				}
 			}
 		}
 	}
@@ -321,7 +331,20 @@ void Player::initializeSprite(Graphics &graphics, const SpriteState &spriteState
 
 	if (spriteState.motionType_ == WALKING)
 	{
-		sprites_[spriteState] = new AnimatedSprite(graphics, kSpriteFilePath, (int)round(source.x), (int)round(source.y), Game::kTileSize, Game::kTileSize, kWalkFps, kNumWalkFrames);
+		switch (spriteState.strideType_)
+		{
+		case STRIDE_MIDDLE:
+			break;
+		case STRIDE_LEFT:
+			source.x += Game::kTileSize;
+			break;
+		case STRIDE_RIGHT:
+			source.x += Game::kTileSize * 2;
+			break;
+		default:
+			break;
+		}
+		sprites_[spriteState] = new Sprite(graphics, kSpriteFilePath, (int)round(source.x), (int)round(source.y), Game::kTileSize, Game::kTileSize);
 	}
 	else
 	{
@@ -335,25 +358,11 @@ void Player::initializeSprite(Graphics &graphics, const SpriteState &spriteState
 
 Player::SpriteState Player::getSpriteState()
 {
-	MotionType motion;
-
-	if (interacting_)
-	{
-		motion = INTERACTING;
-	}
-	else if (onGround())
-	{
-		motion = accelerationX_ == 0 ? STANDING : WALKING;
-	}
-	else
-	{
-		motion = velocity_.y < 0.0f ? JUMPING : FALLING;
-	}
-
 	return SpriteState(
-		motion,
+		motionType(),
 		horizontalFacing_,
-		verticalFacing_);
+		verticalFacing_,
+		walkingAnimation_.stride());
 }
 
 Rectangle Player::leftCollision(int delta) const
@@ -392,13 +401,35 @@ Rectangle Player::bottomCollision(int delta) const
 		kCollisionY.getHeight() / 2 + delta);
 }
 
+Player::MotionType Player::motionType() const
+{
+	MotionType motion;
+
+	if (interacting_)
+	{
+		motion = INTERACTING;
+	}
+	else if (onGround())
+	{
+		motion = accelerationX_ == 0 ? STANDING : WALKING;
+	}
+	else
+	{
+		motion = velocity_.y < 0.0f ? JUMPING : FALLING;
+	}
+
+	return motion;
+}
+
 Player::SpriteState::SpriteState(
 	MotionType motionType = STANDING,
 	HorizontalFacing horizontalFacing = LEFT,
-	VerticalFacing verticalFacing = HORIZONTAL) :
+	VerticalFacing verticalFacing = HORIZONTAL,
+	StrideType strideType = STRIDE_LEFT) :
 	motionType_(motionType),
 	horizontalFacing_(horizontalFacing),
-	verticalFacing_(verticalFacing)
+	verticalFacing_(verticalFacing),
+	strideType_(strideType)
 {
 
 }

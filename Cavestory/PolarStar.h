@@ -13,7 +13,12 @@ struct PolarStar
 {
 	PolarStar(Graphics &graphics);
 
-	void draw(Graphics &graphics, HorizontalFacing horizontalFacing, VerticalFacing verticalFacing, Vector2 position);
+	void draw(
+		Graphics &graphics, 
+		HorizontalFacing horizontalFacing, 
+		VerticalFacing verticalFacing,
+		bool gunUp,
+		Vector2 position);
 
 private:
 	struct SpriteState
