@@ -1,5 +1,9 @@
 #include "Game.h"
 #include "Timer.h"
+#include "Player.h"
+#include "Bat.h"
+#include "Map.h"
+
 #include <cstdio>
 
 namespace
@@ -30,7 +34,8 @@ void Game::eventLoop()
 	SDL_Event event;
 	Input input;
 
-	player_ = new Player(graphics, 320.0f, 240.0f);
+	player_ = new Player(graphics, 350.0f, 240.0f);
+	bat_ = new Bat(graphics, Vector2(150.0f, 490.0f));
 	map_ = Map::createTestMap(graphics);
 
 
@@ -84,7 +89,13 @@ void Game::update(int elapsedTimeMs)
 	Timer::updateAll(elapsedTimeMs);
 
 	player_->update(elapsedTimeMs, *map_);
-	map_->update(elapsedTimeMs);
+	bat_->update(elapsedTimeMs, player_->getPosition());
+	//map_->update(elapsedTimeMs);
+
+	if (bat_->damageRectangle().collidesWith(player_->damageRectangle()))
+	{
+		player_->takeDamage();
+	}
 }
 
 void Game::draw(Graphics &graphics)
@@ -92,6 +103,7 @@ void Game::draw(Graphics &graphics)
 	graphics.clear();
 
 	map_->drawBackground(graphics);
+	bat_->draw(graphics);
 	player_->draw(graphics);
 	map_->draw(graphics);
 
@@ -145,7 +157,7 @@ void Game::handleInput(Input &input)
 	{
 		player_->startJump();
 	}
-	else if (input.wasKeyReleased(SDLK_z) || input.wasKeyPressed(SDLK_SPACE))
+	else if (input.wasKeyReleased(SDLK_z) || input.wasKeyReleased(SDLK_SPACE))
 	{
 		player_->stopJump();
 	}

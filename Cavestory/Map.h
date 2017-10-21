@@ -31,7 +31,7 @@ struct Map
 
 	};
 
-	static Map* createTestMap(Graphics &graphics);
+	static Map *createTestMap(Graphics &graphics);
 
 	std::vector<CollisionTile> getCollidingTiles(const Rectangle &rectangle) const;
 
@@ -45,14 +45,14 @@ private:
 	struct Tile
 	{
 		Tile() : sprite_(nullptr), tileType_(AIR_TILE) {}
-		Tile(Sprite* sprite,
+		Tile(Sprite *sprite,
 			TileType tileType = AIR_TILE) :
 			tileType_(tileType), sprite_(sprite) {}
 
 		TileType tileType_;
-		Sprite* sprite_;
+		Sprite *sprite_;
 	};
-	Backdrop* backdrop_;
+	Backdrop *backdrop_;
 	std::vector<std::vector<Sprite*>> backgroundTiles_;
 	std::vector<std::vector<Tile>> tiles_;
 };

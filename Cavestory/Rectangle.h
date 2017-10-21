@@ -13,6 +13,14 @@ struct Rectangle
 	int getWidth() const { return width_; }
 	int getHeight() const { return height_; }
 
+	bool collidesWith(const Rectangle &other) const
+	{
+		return right() >= other.left() &&
+			left() <= other.right() &&
+			top() <= other.bottom() &&
+			bottom() >= other.top();
+	}
+
 private:
 	const int x_, y_;
 	const int width_, height_;

@@ -13,6 +13,7 @@ namespace
 
 	// Jump Motion
 	const float kJumpSpeed = 0.25f;
+	const float kShortJumpSpeed = kJumpSpeed / 1.5f;
 	const float kJumpGravity = 0.0003125f;
 	const float kAirAcceleration = 0.0003125f;
 
@@ -34,6 +35,9 @@ namespace
 	// Collision Rectangle
 	const Rectangle kCollisionX = Rectangle(6, 10, 20, 12);
 	const Rectangle kCollisionY = Rectangle(10, 2, 12, 30);
+
+	const int kInvincibleFlashTime = 50;
+	const int kInvincibleTime = 3000; //ms
 }
 
 bool operator<(const Player::SpriteState &a, const Player::SpriteState &b)
@@ -50,7 +54,9 @@ Player::Player(Graphics &graphics, int x, int y) :
 	onGround_(false),
 	jumpActive_(false),
 	interacting_(false),
-	polarStar_(graphics)
+	invincible_(false),
+	invincibleTime_(0),
+	polarStar_(graphics) 
 {
 	initializeSprites(graphics);
 }
@@ -62,6 +68,12 @@ void Player::update(int elapsedTimeMs, const Map &map)
 	walkingAnimation_.update();
 
 	polarStar_.updateProjectiles(elapsedTimeMs, map);
+
+	if (invincible_)
+	{
+		invincibleTime_ += elapsedTimeMs;
+		invincible_ = invincibleTime_ < kInvincibleTime;
+	}
 
 	updateX(elapsedTimeMs, map);
 	updateY(elapsedTimeMs, map);
@@ -210,6 +222,8 @@ void Player::updateY(int elapsedTimeMs, const Map &map)
 
 void Player::draw(Graphics &graphics)
 {
+	if (invincible_ && invincibleTime_ / kInvincibleFlashTime % 2 == 0) return;
+
 	polarStar_.draw(graphics, horizontalFacing_, verticalFacing(), gunUp(), position_);
 	sprites_[getSpriteState()]->draw(graphics, position_.x, position_.y);
 }
@@ -276,6 +290,25 @@ void Player::lookDown()
 void Player::lookHorizontal()
 {
 	intendedVerticalFacing_ = HORIZONTAL;
+}
+
+void Player::takeDamage()
+{
+	if (invincible_) return;
+
+	velocity_.y = std::fmin(velocity_.y, -kShortJumpSpeed);
+	printf("Do damage to player!\n");
+	invincible_ = true;
+	invincibleTime_ = 0;
+}
+
+Rectangle Player::damageRectangle() const
+{
+	return Rectangle(
+		position_.x + kCollisionX.left(),
+		position_.y + kCollisionY.top(),
+		kCollisionX.getWidth(),
+		kCollisionY.getHeight());
 }
 
 void Player::initializeSprites(Graphics &graphics)

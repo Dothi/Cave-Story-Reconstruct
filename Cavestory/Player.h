@@ -42,6 +42,12 @@ struct Player
 	void lookDown();
 	void lookHorizontal();
 
+	void takeDamage();
+
+	Rectangle damageRectangle() const;
+
+	Vector2 getPosition() const { return position_; }
+
 private:
 
 	enum MotionType
@@ -128,6 +134,9 @@ private:
 	bool jumpActive_;
 	bool interacting_;
 
+
+	bool invincible_;
+	int invincibleTime_;
 	WalkingAnimation walkingAnimation_;
 
 	PolarStar polarStar_;

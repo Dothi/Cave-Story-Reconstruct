@@ -17,8 +17,8 @@ struct Graphics
 
 	void blitSurface(
 		SurfaceID source,
-		SDL_Rect* sourceRect,
-		SDL_Rect* destinationRect);
+		SDL_Rect *sourceRect,
+		SDL_Rect *destinationRect);
 
 	void clear();
 
@@ -27,8 +27,8 @@ private:
 	typedef std::map<std::string, SDL_Surface*> SpriteMap;
 
 	SpriteMap spriteSheets_;
-	SDL_Window* window_;
-	SDL_Surface* screen_;
+	SDL_Window *window_;
+	SDL_Surface *screen_;
 };
 
 #endif

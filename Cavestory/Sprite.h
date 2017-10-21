@@ -20,7 +20,7 @@ protected:
 	SDL_Rect sourceRect_;
 
 private:
-	SDL_Surface* spriteSheet_;
+	SDL_Surface *spriteSheet_;
 	
 };
 

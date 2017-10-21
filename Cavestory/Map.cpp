@@ -7,7 +7,7 @@ namespace
 }
 
 // static
-Map* Map::createTestMap(Graphics &graphics)
+Map *Map::createTestMap(Graphics &graphics)
 {
 	Map* map = new Map();
 

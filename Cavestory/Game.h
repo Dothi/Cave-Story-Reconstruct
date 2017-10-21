@@ -4,12 +4,12 @@
 #include <SDL.h>
 #include "Graphics.h"
 #include "Input.h"
-#include "Player.h"
-#include "Map.h"
 
 
 struct Player;
+struct Bat;
 struct Map;
+
 
 struct Game
 {
@@ -26,6 +26,7 @@ private:
 	void handleInput(Input &input);
 
 	Player *player_;
+	Bat *bat_;
 	Map *map_;
 
 	bool running;

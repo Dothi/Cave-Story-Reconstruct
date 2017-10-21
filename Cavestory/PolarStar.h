@@ -56,7 +56,7 @@ private:
 		int getX() const;
 		int getY() const;
 
-		Sprite* sprite_;
+		Sprite *sprite_;
 		HorizontalFacing horizontalDir_;
 		VerticalFacing verticalDir_;
 		Vector2 position_;
@@ -72,11 +72,11 @@ private:
 	void initializeSprite(Graphics &graphics, const SpriteState &spriteState);
 
 	std::map<SpriteState, Sprite*> spriteMap_;
-	Sprite* horizontalProjectile_;
-	Sprite* verticalProjectile_;
+	Sprite *horizontalProjectile_;
+	Sprite *verticalProjectile_;
 
-	Projectile* projectileA_;
-	Projectile* projectileB_;
+	Projectile *projectileA_;
+	Projectile *projectileB_;
 };
 
 #endif
