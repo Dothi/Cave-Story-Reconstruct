@@ -3,17 +3,19 @@
 
 #include "Vector2.h"
 #include "SpriteState.h"
+#include "Rectangle.h"
 
 #include <map>
 
 struct Graphics;
+struct Map;
 struct Sprite;
 
 struct PolarStar
 {
 	PolarStar(Graphics &graphics);
 
-	void updateProjectiles(int elapsedTime);
+	void updateProjectiles(int elapsedTime, const Map &map);
 	void draw(
 		Graphics &graphics, 
 		HorizontalFacing horizontalFacing, 
@@ -46,10 +48,14 @@ private:
 
 
 		// Returns true if this is alive
-		bool update(int elapsedTime);
+		bool update(int elapsedTime, const Map &map);
 		void draw(Graphics &graphics);
 
 	private:
+		Rectangle collisionRectangle() const;
+		int getX() const;
+		int getY() const;
+
 		Sprite* sprite_;
 		HorizontalFacing horizontalDir_;
 		VerticalFacing verticalDir_;

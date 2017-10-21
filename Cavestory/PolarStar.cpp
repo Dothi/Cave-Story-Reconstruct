@@ -1,6 +1,7 @@
 #include "PolarStar.h"
 #include "Graphics.h"
 #include "Sprite.h"
+#include "Map.h"
 #include "Game.h"
 #include <cmath>
 
@@ -42,25 +43,29 @@ namespace
 
 	const int kProjectileMaxOffset = 14 * Game::kTileSize / 2;
 	//const int kProjectileMaxOffset = 7 * Game::kTileSize / 2;
+
+	const float kProjectileWidth = 4.0f;
 }
 
-PolarStar::PolarStar(Graphics &graphics) : projectileA_(nullptr), projectileB_(nullptr)
+PolarStar::PolarStar(Graphics &graphics) : 
+	projectileA_(nullptr), 
+	projectileB_(nullptr)
 {
 	initializeSprites(graphics);
 }
 
-void PolarStar::updateProjectiles(int elapsedTime)
+void PolarStar::updateProjectiles(int elapsedTime, const Map &map)
 {
 	if (projectileA_)
 	{
-		if (!projectileA_->update(elapsedTime))
+		if (!projectileA_->update(elapsedTime, map))
 		{
 			projectileA_ = nullptr;
 		}
 	}
 	if (projectileB_)
 	{
-		if (!projectileB_->update(elapsedTime))
+		if (!projectileB_->update(elapsedTime, map))
 		{
 			projectileB_ = nullptr;
 		}
@@ -247,33 +252,58 @@ PolarStar::Projectile::Projectile(
 
 }
 
-bool PolarStar::Projectile::update(int elapsedTime)
+bool PolarStar::Projectile::update(int elapsedTime, const Map &map)
 {
 	offset_ += kProjectileSpeed * elapsedTime;
+	
+	std::vector<Map::CollisionTile> collidingTiles(map.getCollidingTiles(collisionRectangle()));
+
+	for (size_t i = 0; i < collidingTiles.size(); ++i)
+	{
+		if (collidingTiles[i].tileType_ == Map::WALL_TILE)
+		{
+			return false;
+		}
+	}
+
 	return offset_ < kProjectileMaxOffset;
 }
 
-void PolarStar::Projectile::draw(Graphics &graphics)
+Rectangle PolarStar::Projectile::collisionRectangle() const
 {
-	Vector2 pos;
-	pos = position_;
-	pos.x = (int)round(pos.x);
-	pos.y = (int)round(pos.y);
+	const int width = verticalDir_ == HORIZONTAL ? Game::kTileSize : kProjectileWidth;
+	const int height = verticalDir_ != HORIZONTAL ? Game::kTileSize : kProjectileWidth;
+	return Rectangle(
+		getX() + Game::kTileSize / 2 - width / 2,
+		getY() + Game::kTileSize / 2 - height / 2,
+		width, height);
+}
 
+int PolarStar::Projectile::getX() const
+{
+	if (verticalDir_ == HORIZONTAL)
+		return position_.x + (horizontalDir_ == LEFT ? -offset_ : offset_);
+	return position_.x;
+}
+
+int PolarStar::Projectile::getY() const
+{
+	int y = (int)round(position_.y);
 	switch (verticalDir_)
 	{
-	case HORIZONTAL:
-		pos.x += horizontalDir_ == LEFT ? -offset_ : offset_;
-		break;
 	case UP:
-		pos.y -= offset_;
+		y -= offset_;
 		break;
 	case DOWN:
-		pos.y += offset_;
+		y += offset_;
 		break;
 	default:
 		break;
 	}
+	return y;
+}
 
-	sprite_->draw(graphics, pos.x, pos.y);
+void PolarStar::Projectile::draw(Graphics &graphics)
+{
+	sprite_->draw(graphics, getX() , getY());
 }

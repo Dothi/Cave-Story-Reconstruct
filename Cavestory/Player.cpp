@@ -61,7 +61,7 @@ void Player::update(int elapsedTimeMs, const Map &map)
 
 	walkingAnimation_.update();
 
-	polarStar_.updateProjectiles(elapsedTimeMs);
+	polarStar_.updateProjectiles(elapsedTimeMs, map);
 
 	updateX(elapsedTimeMs, map);
 	updateY(elapsedTimeMs, map);
