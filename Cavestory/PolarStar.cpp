@@ -8,8 +8,8 @@
 namespace
 {
 	const int kPolarStarIndex = 2;
-	const int kGunWidth = 3 * Game::kTileSize / 2;
-	const int kGunHeight = 2 * Game::kTileSize / 2;
+	const int kGunWidth = 3 * Game::kHalfTile;
+	const int kGunHeight = 2 * Game::kHalfTile;
 
 	const int kHorizontalOffset = 0;
 	const int kUpOffset = Game::kTileSize * 2;
@@ -41,7 +41,7 @@ namespace
 	// Projectile Velocity
 	const float kProjectileSpeed = 0.6f;
 
-	const int kProjectileMaxOffset = 14 * Game::kTileSize / 2;
+	const int kProjectileMaxOffset = 14 * Game::kHalfTile;
 	//const int kProjectileMaxOffset = 7 * Game::kTileSize / 2;
 
 	const float kProjectileWidth = 4.0f;

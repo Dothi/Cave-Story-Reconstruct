@@ -20,8 +20,8 @@ struct Bat
 	Rectangle damageRectangle() const 
 	{
 		return Rectangle(
-			position_.x + Game::kTileSize / 2.0f, 
-			position_.y + Game::kTileSize / 2.0f,
+			position_.x + Game::kHalfTile, 
+			position_.y + Game::kHalfTile,
 			0, 0);
 	}
 private:

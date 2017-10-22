@@ -31,7 +31,8 @@ Graphics::SurfaceID Graphics::loadImage(const std::string filePath, bool blackIs
 		spriteSheets_[filePath] = SDL_LoadBMP(filePath.c_str());
 		if (blackIsTransparent)
 		{
-			SDL_SetColorKey(spriteSheets_[filePath], SDL_TRUE, 0); // black color
+			const Uint32 blackColor = SDL_MapRGB(spriteSheets_[filePath]->format, 0, 0, 0);
+			SDL_SetColorKey(spriteSheets_[filePath], SDL_TRUE, blackColor); // black color
 		}
 	}
 	return spriteSheets_[filePath];

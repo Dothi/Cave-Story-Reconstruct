@@ -17,6 +17,7 @@ struct Game
 	~Game();
 
 	static int kTileSize;
+	static int kHalfTile;
 	static int kScreenWidth;
 	static int kScreenHeight;
 private:

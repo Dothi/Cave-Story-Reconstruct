@@ -21,7 +21,10 @@ namespace
 	const std::string kSpriteFilePath("../content/MyChar.bmp");
 
 	// Sprite Frames
-	const int kCharacterFrame = 0; // in rows, not columns
+	const int kCharacterFrames[12] = { 0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22 }; // in rows, not columns
+
+
+
 	const int kWalkFrame = 0;
 	const int kStandFrame = 0;
 	const int kJumpFrame = 1;
@@ -30,14 +33,26 @@ namespace
 	const int kDownFrame = 6;
 	const int kBackFrame = 7;
 
-	
-
 	// Collision Rectangle
 	const Rectangle kCollisionX = Rectangle(6, 10, 20, 12);
 	const Rectangle kCollisionY = Rectangle(10, 2, 12, 30);
 
 	const int kInvincibleFlashTime = 50;
 	const int kInvincibleTime = 3000; //ms
+
+	// HUD Constants
+	const int kHealthBarX = Game::kTileSize;
+	const int kHealthBarY = 2 * Game::kTileSize;
+	const int kHealthBarSourceX = 0;
+	const int kHealthBarSourceY = 5 * Game::kHalfTile;
+	const int kHealthBarSourceWidth = 4 * Game::kTileSize;
+	const int kHealthBarSourceHeight = Game::kHalfTile;
+
+	const int kHealthFillX = 5 * Game::kHalfTile;
+	const int kHealthFillY = 2 * Game::kTileSize;
+	const int kHealthFillSourceX = 0;
+	const int kHealthFillSourceY = 3 * Game::kHalfTile;
+	const int kHealthFillSourceHeight = Game::kHalfTile;
 }
 
 bool operator<(const Player::SpriteState &a, const Player::SpriteState &b)
@@ -56,7 +71,7 @@ Player::Player(Graphics &graphics, int x, int y) :
 	interacting_(false),
 	invincible_(false),
 	invincibleTime_(0),
-	polarStar_(graphics) 
+	polarStar_(graphics)
 {
 	initializeSprites(graphics);
 }
@@ -222,11 +237,24 @@ void Player::updateY(int elapsedTimeMs, const Map &map)
 
 void Player::draw(Graphics &graphics)
 {
-	if (invincible_ && invincibleTime_ / kInvincibleFlashTime % 2 == 0) return;
-
-	polarStar_.draw(graphics, horizontalFacing_, verticalFacing(), gunUp(), position_);
-	sprites_[getSpriteState()]->draw(graphics, position_.x, position_.y);
+	if (spriteIsVisible())
+	{
+		polarStar_.draw(graphics, horizontalFacing_, verticalFacing(), gunUp(), position_);
+		sprites_[getSpriteState()]->draw(graphics, position_.x, position_.y);
+	}
 }
+
+void Player::drawHUD(Graphics &graphics) const
+{
+	if (spriteIsVisible())
+	{
+		healthBarSprite_->draw(graphics, kHealthBarX, kHealthBarY);
+		healthFillSprite_->draw(graphics, kHealthFillX, kHealthFillY);
+
+		three->draw(graphics, Game::kTileSize * 2, Game::kTileSize * 2);
+	}
+}
+
 
 void Player::startMovingLeft()
 {
@@ -313,6 +341,18 @@ Rectangle Player::damageRectangle() const
 
 void Player::initializeSprites(Graphics &graphics)
 {
+	healthBarSprite_ = new Sprite(graphics, "../content/TextBox.bmp",
+		kHealthBarSourceX, kHealthBarSourceY,
+		kHealthBarSourceWidth, kHealthBarSourceHeight);
+
+	healthFillSprite_ = new Sprite(graphics, "../content/TextBox.bmp",
+		kHealthFillSourceX, kHealthFillSourceY,
+		Game::kHalfTile * 5 - 2, kHealthFillSourceHeight);
+
+	three = new Sprite(graphics, "../content/TextBox.bmp",
+		3 * Game::kHalfTile, 7 * Game::kHalfTile,
+		Game::kHalfTile, Game::kHalfTile);
+
 	for (int motionType = FIRST_MOTION_TYPE;
 		motionType < LAST_MOTION_TYPE;
 		++motionType)
@@ -343,6 +383,8 @@ void Player::initializeSprites(Graphics &graphics)
 void Player::initializeSprite(Graphics &graphics, const SpriteState &spriteState)
 {
 	Vector2 source;
+	int i = kCharacterFrames[1];
+	const int kCharacterFrame = i;
 
 	source.y = spriteState.horizontalFacing_ == LEFT ? kCharacterFrame * Game::kTileSize
 		: (1 + kCharacterFrame) * Game::kTileSize;
@@ -467,6 +509,11 @@ Player::MotionType Player::motionType() const
 	}
 
 	return motion;
+}
+
+bool Player::spriteIsVisible() const
+{
+	return !(invincible_ && invincibleTime_ / kInvincibleFlashTime % 2 == 0);
 }
 
 Player::SpriteState::SpriteState(

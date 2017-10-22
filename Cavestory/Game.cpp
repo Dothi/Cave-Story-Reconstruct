@@ -14,6 +14,7 @@ namespace
 
 // Static
 int Game::kTileSize = 32;
+int Game::kHalfTile = Game::kTileSize / 2;
 int Game::kScreenWidth = 1024;
 int Game::kScreenHeight = 768;
 
@@ -106,6 +107,8 @@ void Game::draw(Graphics &graphics)
 	bat_->draw(graphics);
 	player_->draw(graphics);
 	map_->draw(graphics);
+
+	player_->drawHUD(graphics); 
 
 	graphics.updateWindowSurface();
 }

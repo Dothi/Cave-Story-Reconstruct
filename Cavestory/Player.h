@@ -27,6 +27,7 @@ struct Player
 	void updateY(int elapsedTimeMs, const Map &map);
 
 	void draw(Graphics &graphics);
+	void drawHUD(Graphics &graphics) const;
 
 	void startMovingLeft();
 	void startMovingRight();
@@ -119,6 +120,7 @@ private:
 
 
 	MotionType motionType() const;
+	bool spriteIsVisible() const;
 	bool onGround() const { return onGround_; }
 	bool gunUp() const { return motionType() == WALKING && walkingAnimation_.stride() != STRIDE_MIDDLE; }
 	VerticalFacing verticalFacing() const { return onGround() && intendedVerticalFacing_ == DOWN ?
@@ -142,6 +144,9 @@ private:
 	PolarStar polarStar_;
 
 	std::map<SpriteState, Sprite*> sprites_;
+	Sprite *healthBarSprite_;
+	Sprite *healthFillSprite_;
+	Sprite *three;
 };
 
 #endif

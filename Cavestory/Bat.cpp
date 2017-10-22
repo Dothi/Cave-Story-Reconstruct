@@ -24,13 +24,13 @@ void Bat::update(int elapsedTime, Vector2 playerPos)
 {
 	flightAngle_ += kAngularVelocity * elapsedTime;
 
-	const float center = position_.x + Game::kTileSize / 2.0f;
-	const float playerCenter = playerPos.x + Game::kTileSize / 2.0f;
+	const float center = position_.x + Game::kHalfTile;
+	const float playerCenter = playerPos.x + Game::kHalfTile;
 
 	facing_ = center > playerCenter ?
 		LEFT : RIGHT;
 
-	position_.y = centerY_ + Game::kTileSize * 5 / 2.0f * std::sin(degreesToRadians(flightAngle_));
+	position_.y = centerY_ + Game::kHalfTile * 5 * std::sin(degreesToRadians(flightAngle_));
 
 	sprites_[getSpriteState()]->update(elapsedTime);
 }
