@@ -5,6 +5,7 @@
 #include <map>
 #include <string>
 #include "Sprite.h"
+#include "NumberSprite.h"
 #include "SpriteState.h"
 #include "AnimatedSprite.h"
 #include "Graphics.h"
@@ -14,8 +15,10 @@
 #include "PolarStar.h"
 #include "Timer.h"
 
+
 struct Graphics;
 struct Map;
+
 
 struct Player
 {
@@ -146,7 +149,7 @@ private:
 	std::map<SpriteState, Sprite*> sprites_;
 	Sprite *healthBarSprite_;
 	Sprite *healthFillSprite_;
-	Sprite *three;
+	NumberSprite *healthNumberSprite_;
 };
 
 #endif

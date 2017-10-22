@@ -23,8 +23,6 @@ namespace
 	// Sprite Frames
 	const int kCharacterFrames[12] = { 0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22 }; // in rows, not columns
 
-
-
 	const int kWalkFrame = 0;
 	const int kStandFrame = 0;
 	const int kJumpFrame = 1;
@@ -53,6 +51,10 @@ namespace
 	const int kHealthFillSourceX = 0;
 	const int kHealthFillSourceY = 3 * Game::kHalfTile;
 	const int kHealthFillSourceHeight = Game::kHalfTile;
+
+	const int kHealthNumberX = 3 * Game::kHalfTile;
+	const int kHealthNumberY = 2 * Game::kTileSize;
+	const int kHealthNumberNumDigits = 2;
 }
 
 bool operator<(const Player::SpriteState &a, const Player::SpriteState &b)
@@ -251,7 +253,7 @@ void Player::drawHUD(Graphics &graphics) const
 		healthBarSprite_->draw(graphics, kHealthBarX, kHealthBarY);
 		healthFillSprite_->draw(graphics, kHealthFillX, kHealthFillY);
 
-		three->draw(graphics, Game::kTileSize * 2, Game::kTileSize * 2);
+		healthNumberSprite_->draw(graphics, kHealthNumberX, kHealthNumberY);
 	}
 }
 
@@ -349,9 +351,8 @@ void Player::initializeSprites(Graphics &graphics)
 		kHealthFillSourceX, kHealthFillSourceY,
 		Game::kHalfTile * 5 - 2, kHealthFillSourceHeight);
 
-	three = new Sprite(graphics, "../content/TextBox.bmp",
-		3 * Game::kHalfTile, 7 * Game::kHalfTile,
-		Game::kHalfTile, Game::kHalfTile);
+	healthNumberSprite_ = new NumberSprite(graphics, 10, kHealthNumberNumDigits);
+		
 
 	for (int motionType = FIRST_MOTION_TYPE;
 		motionType < LAST_MOTION_TYPE;
