@@ -72,7 +72,9 @@ void Player::Health::draw(Graphics &graphics)
 		damageFillSprite_.draw(graphics, kHealthFillX + fillOffset(currentHealth_ - damage_), kHealthFillY);
 	}
 
-	NumberSprite(graphics, currentHealth_, kHealthNumberNumDigits).draw(graphics, kHealthNumberX, kHealthNumberY);
+	NumberSprite::HUDNumber(graphics, currentHealth_, kHealthNumberNumDigits).draw(graphics, kHealthNumberX, kHealthNumberY);
+	//NumberSprite num(NumberSprite::ExperienceNumber(graphics, 32)); 
+	//num.draw(graphics,  -num.width() / 2, -num.height() / 2);
 }
 
 bool Player::Health::takeDamage(int damage)
