@@ -5,6 +5,7 @@
 #include <map>
 #include <string>
 #include "Sprite.h"
+#include "VaryingWidthSprite.h"
 #include "NumberSprite.h"
 #include "SpriteState.h"
 #include "AnimatedSprite.h"
@@ -30,7 +31,7 @@ struct Player
 	void updateY(int elapsedTimeMs, const Map &map);
 
 	void draw(Graphics &graphics);
-	void drawHUD(Graphics &graphics) const;
+	void drawHUD(Graphics &graphics);
 
 	void startMovingLeft();
 	void startMovingRight();
@@ -89,6 +90,23 @@ private:
 		StrideType strideType_;
 	};
 
+	struct Health
+	{
+		Health(Graphics &graphics);
+		void update(int elapsedTime);
+		void draw(Graphics &graphics);
+		bool takeDamage(int damage);
+	private:
+		int fillOffset(int health) const;
+		int damage_;
+		int damageTime_;
+		int maxHealth_;
+		int currentHealth_;
+		Sprite healthBarSprite_;
+		VaryingWidthSprite healthFillSprite_;
+		VaryingWidthSprite damageFillSprite_;
+	};
+
 	struct WalkingAnimation
 	{
 		WalkingAnimation();
@@ -139,7 +157,7 @@ private:
 	bool jumpActive_;
 	bool interacting_;
 
-
+	Health health_;
 	bool invincible_;
 	int invincibleTime_;
 	WalkingAnimation walkingAnimation_;
@@ -147,9 +165,7 @@ private:
 	PolarStar polarStar_;
 
 	std::map<SpriteState, Sprite*> sprites_;
-	Sprite *healthBarSprite_;
-	Sprite *healthFillSprite_;
-	NumberSprite *healthNumberSprite_;
+	
 };
 
 #endif

@@ -37,24 +37,6 @@ namespace
 
 	const int kInvincibleFlashTime = 50;
 	const int kInvincibleTime = 3000; //ms
-
-	// HUD Constants
-	const int kHealthBarX = Game::kTileSize;
-	const int kHealthBarY = 2 * Game::kTileSize;
-	const int kHealthBarSourceX = 0;
-	const int kHealthBarSourceY = 5 * Game::kHalfTile;
-	const int kHealthBarSourceWidth = 4 * Game::kTileSize;
-	const int kHealthBarSourceHeight = Game::kHalfTile;
-
-	const int kHealthFillX = 5 * Game::kHalfTile;
-	const int kHealthFillY = 2 * Game::kTileSize;
-	const int kHealthFillSourceX = 0;
-	const int kHealthFillSourceY = 3 * Game::kHalfTile;
-	const int kHealthFillSourceHeight = Game::kHalfTile;
-
-	const int kHealthNumberX = 3 * Game::kHalfTile;
-	const int kHealthNumberY = 2 * Game::kTileSize;
-	const int kHealthNumberNumDigits = 2;
 }
 
 bool operator<(const Player::SpriteState &a, const Player::SpriteState &b)
@@ -71,6 +53,7 @@ Player::Player(Graphics &graphics, int x, int y) :
 	onGround_(false),
 	jumpActive_(false),
 	interacting_(false),
+	health_(graphics),
 	invincible_(false),
 	invincibleTime_(0),
 	polarStar_(graphics)
@@ -91,7 +74,7 @@ void Player::update(int elapsedTimeMs, const Map &map)
 		invincibleTime_ += elapsedTimeMs;
 		invincible_ = invincibleTime_ < kInvincibleTime;
 	}
-
+	health_.update(elapsedTimeMs);
 	updateX(elapsedTimeMs, map);
 	updateY(elapsedTimeMs, map);
 }
@@ -246,14 +229,11 @@ void Player::draw(Graphics &graphics)
 	}
 }
 
-void Player::drawHUD(Graphics &graphics) const
+void Player::drawHUD(Graphics &graphics)
 {
 	if (spriteIsVisible())
 	{
-		healthBarSprite_->draw(graphics, kHealthBarX, kHealthBarY);
-		healthFillSprite_->draw(graphics, kHealthFillX, kHealthFillY);
-
-		healthNumberSprite_->draw(graphics, kHealthNumberX, kHealthNumberY);
+		health_.draw(graphics);
 	}
 }
 
@@ -303,7 +283,7 @@ void Player::stopFire()
 {
 	polarStar_.stopFire();
 }
-
+ 
 void Player::lookUp()
 {
 	intendedVerticalFacing_ = UP;
@@ -325,7 +305,7 @@ void Player::lookHorizontal()
 void Player::takeDamage()
 {
 	if (invincible_) return;
-
+	health_.takeDamage(2);
 	velocity_.y = std::fmin(velocity_.y, -kShortJumpSpeed);
 	printf("Do damage to player!\n");
 	invincible_ = true;
@@ -343,17 +323,6 @@ Rectangle Player::damageRectangle() const
 
 void Player::initializeSprites(Graphics &graphics)
 {
-	healthBarSprite_ = new Sprite(graphics, "../content/TextBox.bmp",
-		kHealthBarSourceX, kHealthBarSourceY,
-		kHealthBarSourceWidth, kHealthBarSourceHeight);
-
-	healthFillSprite_ = new Sprite(graphics, "../content/TextBox.bmp",
-		kHealthFillSourceX, kHealthFillSourceY,
-		Game::kHalfTile * 5 - 2, kHealthFillSourceHeight);
-
-	healthNumberSprite_ = new NumberSprite(graphics, 10, kHealthNumberNumDigits);
-		
-
 	for (int motionType = FIRST_MOTION_TYPE;
 		motionType < LAST_MOTION_TYPE;
 		++motionType)
