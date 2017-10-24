@@ -13,7 +13,7 @@ Vector2::Vector2() :
 
 }
 
-Vector2 Vector2::operator+(const Vector2 &vector)
+Vector2 Vector2::operator+(const Vector2 &vector) const
 {
 	Vector2 result = Vector2(0.0f, 0.0f);
 
@@ -23,7 +23,7 @@ Vector2 Vector2::operator+(const Vector2 &vector)
 	return result;
 }
 
-Vector2 Vector2::operator-(const Vector2 &vector)
+Vector2 Vector2::operator-(const Vector2 &vector) const
 {
 	Vector2 result = Vector2(0.0f, 0.0f);
 
@@ -33,7 +33,7 @@ Vector2 Vector2::operator-(const Vector2 &vector)
 	return result;
 }
 
-Vector2 Vector2::operator*(const float &scalar)
+Vector2 Vector2::operator*(const float &scalar) const
 {
 
 	Vector2 result = Vector2(0.0f, 0.0f);
@@ -44,7 +44,7 @@ Vector2 Vector2::operator*(const float &scalar)
 	return result;
 }
 
-float operator*(const Vector2 &vector, const Vector2 &vector2)
+float const operator*(const Vector2 &vector, const Vector2 &vector2)
 {
 	float result = 0.0f;
 
@@ -53,7 +53,7 @@ float operator*(const Vector2 &vector, const Vector2 &vector2)
 	return result;
 }
 
-Vector2 Vector2::operator/(const float &scalar)
+Vector2 Vector2::operator/(const float &scalar) const
 {
 	Vector2 result(x, y);
 
@@ -62,7 +62,7 @@ Vector2 Vector2::operator/(const float &scalar)
 	return result;
 }
 
-float Vector2::length()
+float Vector2::length() const
 {
 	float length;
 
@@ -71,7 +71,7 @@ float Vector2::length()
 	return length;
 }
 
-Vector2 Vector2::normalize()
+Vector2 Vector2::normalize() const
 {
 	Vector2 normalizedVector(0.0f, 0.0f);
 	float length = this->length();
